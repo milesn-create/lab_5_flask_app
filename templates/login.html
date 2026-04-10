@@ -1,47 +1,51 @@
-{% extends "base.html" %}
-
-{% block title %}Вход в систему{% endblock %}
-
-{% block content %}
-<div class="auth-container">
-    <div class="auth-box">
-        <h2><i class="fas fa-sign-in-alt"></i> Вход в систему</h2>
-
-        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
-            <div class="form-group">
-                <label for="username">
-                    <i class="fas fa-user"></i> Имя пользователя
-                </label>
-                <input type="text"
-                       id="username"
-                       name="username"
-                       required
-                       placeholder="Введите имя пользователя">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>
+                 Вход в систему
+            </h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                                {{ message }}
+                                <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label> Логин</label>
+                    <input type="text" name="login" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label> Пароль</label>
+                    <input type="password" name="password" required placeholder="Введите пароль">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p> Тестовые пользователи:</p>
+                <ul>
+                    <li> admin / Admin123</li>
+                    <li> user / User123</li>
+                </ul>
             </div>
-
-            <div class="form-group">
-                <label for="password">
-                    <i class="fas fa-lock"></i> Пароль
-                </label>
-                <input type="password"
-                       id="password"
-                       name="password"
-                       required
-                       placeholder="Введите пароль">
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block">
-                <i class="fas fa-sign-in-alt"></i> Войти
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            <p>Демо-доступы:</p>
-            <ul>
-                <li><strong>admin</strong> / <strong>Admin123</strong> (администратор)</li>
-                <li><strong>user1</strong> / <strong>User12345</strong> (пользователь)</li>
-            </ul>
         </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

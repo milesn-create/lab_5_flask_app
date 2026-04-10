@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика по пользователям</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-brand">
+                UserManager
+            </a>
+            <div class="nav-menu">
+                <span class="nav-user">
+                    {{ session.user_name }} ({{ session.role }})
+                </span>
+                <a href="{{ url_for('auth.change_password') }}" class="nav-link">Сменить пароль</a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link">Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                Статистика посещений по пользователям
+            </h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="{{ url_for('reports.export_users_csv') }}" class="btn btn-success">
+                    Экспорт в CSV
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    На главную
+                </a>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Пользователь</th>
+                        <th>Количество посещений</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for idx, (user_name, count) in enumerate(stats, start=1) %}
+                    <tr>
+                        <td>{{ idx }}</td>
+                        <td>
+                            {% if 'Неаутентифицированный' in user_name %}
+                                <span style="color: #94A3B8;">{{ user_name }}</span>
+                            {% else %}
+                                <span>{{ user_name }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span style="background: linear-gradient(95deg, #10B981, #059669); 
+                                         padding: 4px 12px; 
+                                         border-radius: 20px; 
+                                         font-weight: 600;
+                                         display: inline-block;">
+                                {{ count }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not stats %}
+        <div style="text-align: center; padding: 40px; color: #94A3B8;">
+            Нет данных для отображения
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+            <a href="{{ url_for('reports.visit_logs') }}" class="btn btn-secondary">
+                Журнал посещений
+            </a>
+            <a href="{{ url_for('reports.stats_pages') }}" class="btn btn-secondary">
+                Статистика по страницам
+            </a>
+        </div>
+    </div>
+</body>
+</html>

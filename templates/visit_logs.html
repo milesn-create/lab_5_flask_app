@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+#Главная страница журнала посещений
+#Пагинация записей
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if session.role == 'admin' %}Журнал посещений{% else %}Мои посещения{% endif %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-brand">
+                 UserManager
+            </a>
+            <div class="nav-menu">
+                <span class="nav-user"> {{ session.user_name }}</span>
+                <a href="{{ url_for('auth.change_password') }}" class="nav-link">Сменить пароль</a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link"> Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                 {% if session.role == 'admin' %}Журнал посещений{% else %}Мои посещения{% endif %}
+            </h1>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">← На главную</a>
+        </div>
+
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Пользователь</th>
+                        <th>Страница</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.num }}</td>
+                        <td>{{ log.user }}</td>
+                        <td>{{ log.path }}</td>
+                        <td>{{ log.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('reports.visit_logs', page=page-1) }}">← Предыдущая</a>
+            {% endif %}
+            <span>Страница {{ page }} из {{ ((total - 1) // per_page) + 1 if total > 0 else 1 }}</span>
+            {% if page * per_page < total %}
+                <a href="{{ url_for('reports.visit_logs', page=page+1) }}">Следующая →</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

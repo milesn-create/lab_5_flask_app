@@ -1,56 +1,81 @@
-{% extends "base.html" %}
-
-{% block title %}Просмотр пользователя{% endblock %}
-
-{% block content %}
-<div class="header">
-    <h1><i class="fas fa-user"></i> Просмотр пользователя</h1>
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Назад к списку
-    </a>
-</div>
-
-<div class="user-details">
-    <table class="details-table">
-        <tr>
-            <th>ID:</th>
-            <td>{{ user.id }}</td>
-        </tr>
-        <tr>
-            <th>Логин:</th>
-            <td>{{ user.username }}</td>
-        </tr>
-        <tr>
-            <th>Фамилия:</th>
-            <td>{{ user.last_name or 'Не указана' }}</td>
-        </tr>
-        <tr>
-            <th>Имя:</th>
-            <td>{{ user.first_name }}</td>
-        </tr>
-        <tr>
-            <th>Отчество:</th>
-            <td>{{ user.middle_name or 'Не указано' }}</td>
-        </tr>
-        <tr>
-            <th>Роль:</th>
-            <td>{{ user.role_name or 'Не назначена' }}</td>
-        </tr>
-        <tr>
-            <th>Дата создания:</th>
-            <td>{{ user.created_at }}</td>
-        </tr>
-    </table>
-
-    <div class="user-actions">
-        <a href="{{ url_for('index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Назад
-        </a>
-        {% if session.user_id %}
-            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Редактировать
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Просмотр пользователя</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-brand">
+                UserManager
             </a>
-        {% endif %}
+            <div class="nav-menu">
+                {% if session.user_id %}
+                    <span class="nav-user">
+                        {{ session.user_name }} ({{ session.role }})
+                    </span>
+                    <a href="{{ url_for('auth.change_password') }}" class="nav-link">Сменить пароль</a>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link">Выйти</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Просмотр пользователя</h1>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">На главную</a>
+        </div>
+
+        <div class="table-container">
+            <table class="user-table">
+                <tbody>
+                    <tr>
+                        <th>Логин</th>
+                        <td>{{ user.login }}</td>
+                    </tr>
+                    <tr>
+                        <th>Имя</th>
+                        <td>{{ user.first_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Фамилия</th>
+                        <td>{{ user.last_name or '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Отчество</th>
+                        <td>{{ user.middle_name or '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Роль</th>
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <span style="background: linear-gradient(95deg, #8B5CF6, #6366F1); padding: 4px 12px; border-radius: 20px;">
+                                    Администратор
+                                </span>
+                            {% else %}
+                                <span style="background: linear-gradient(95deg, #10B981, #059669); padding: 4px 12px; border-radius: 20px;">
+                                    Пользователь
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Дата создания</th>
+                        <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M:%S') if user.created_at else '' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px;">
+            {% if session.role == 'admin' or (session.role == 'user' and session.user_id == user.id) %}
+                <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-primary">Редактировать</a>
+            {% endif %}
+        </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>
